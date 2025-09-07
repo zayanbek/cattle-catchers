@@ -1,7 +1,7 @@
 import pygame, sys, random, asyncio
 from pygame.math import Vector2
 
-class SNAKE:
+class COWBOY:
 	def __init__(self):
 		self.reset()
 		self.new_block = False
@@ -19,7 +19,7 @@ class SNAKE:
 		self.moo1 = pygame.mixer.Sound('Sound/moo.wav')
 		self.moo2 = pygame.mixer.Sound('Sound/moo2.wav')
 
-	def draw_snake(self):
+	def draw_cowboy(self):
 		self.update_head_graphics()
 		self.update_tail_graphics()
 
@@ -63,7 +63,7 @@ class SNAKE:
 		elif tail_relation == Vector2(0,1): self.tail = pygame.transform.rotate(self.tail_down, 180)
 		elif tail_relation == Vector2(0,-1): self.tail = self.tail_down
 
-	def move_snake(self):
+	def move_cowboy(self):
 		if self.new_block == True:
 			body_copy = self.body[:]
 			body_copy.insert(0,body_copy[0] + self.direction)
@@ -88,13 +88,13 @@ class SNAKE:
 		self.body = [Vector2(i, 10) for i in range(10, 2, -1)]
 		self.direction = Vector2(0,0)
 
-class FRUIT:
+class CATTLE:
 	def __init__(self):
 		self.randomize()
 
-	def draw_fruit(self):
-		fruit_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
-		screen.blit(apple,fruit_rect)
+	def draw_cow(self):
+		cow_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
+		screen.blit(apple,cow_rect)
 
 	def randomize(self):
 		self.x = random.randint(2,cell_number - 3)
@@ -104,12 +104,12 @@ class FRUIT:
 
 class MAIN:
 	def __init__(self):
-		self.snake = SNAKE()
-		self.fruit = FRUIT()
+		self.cowboy = COWBOY()
+		self.cow = CATTLE()
 		self.score = 0
 
 	def update(self):
-		self.snake.move_snake()
+		self.cowboy.move_cowboy()
 		self.check_collision()
 		self.check_fail()
 
@@ -122,22 +122,22 @@ class MAIN:
 		fence_rect = pygame.Rect(0,0,800,800)
 		screen.blit(fence,fence_rect)
 
-		self.fruit.draw_fruit()
-		self.snake.draw_snake()
+		self.cow.draw_cow()
+		self.cowboy.draw_cowboy()
 		self.draw_score()
 
 	def loop_made(self, body, target):
-		tampered_snake = body[1:]
+		tampered_cowboy = body[1:]
 		target_x = int(target.x)
 		target_y = int(target.y)
 
 		same_x = [
-			p for p in tampered_snake
+			p for p in tampered_cowboy
 			if int(p.x) == target_x and (int(p.x), int(p.y)) != (target_x, target_y)
 		]
 
 		same_y = [
-			p for p in tampered_snake
+			p for p in tampered_cowboy
 			if int(p.y) == target_y and (int(p.x), int(p.y)) != (target_x, target_y)
 		]
 
@@ -147,32 +147,32 @@ class MAIN:
 		return len(unique_same_x) >= 2 and len(unique_same_y) >= 2
 	
 	def check_collision(self):
-		if self.loop_made(self.snake.body, self.fruit.pos):
-			self.fruit.randomize()
-			self.snake.add_block()
-			self.snake.play_moo_sound()
+		if self.loop_made(self.cowboy.body, self.cow.pos):
+			self.cow.randomize()
+			self.cowboy.add_block()
+			self.cowboy.play_moo_sound()
 			self.score += 1
 
-		if self.fruit.pos == self.snake.body[0]:
+		if self.cow.pos == self.cowboy.body[0]:
 			self.game_over()
 		
 
-		for block in self.snake.body[1:]:
-			if block == self.fruit.pos:
-				self.fruit.randomize()
+		for block in self.cowboy.body[1:]:
+			if block == self.cow.pos:
+				self.cow.randomize()
 
 	
 
 	def check_fail(self):
-		if not 1 <= self.snake.body[0].x < cell_number-1 or not 1 <= self.snake.body[0].y < cell_number-1:
+		if not 1 <= self.cowboy.body[0].x < cell_number-1 or not 1 <= self.cowboy.body[0].y < cell_number-1:
 			self.game_over()
 
-		for block in self.snake.body[1:]:
-			if block == self.snake.body[0]:
+		for block in self.cowboy.body[1:]:
+			if block == self.cowboy.body[0]:
 				self.game_over()
 		
 	def game_over(self):
-		self.snake.reset()
+		self.cowboy.reset()
 		self.score = 0
 
 	def draw_grass(self):
@@ -251,17 +251,17 @@ async def main():
 				main_game.update()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_UP or event.key == pygame.K_w:
-					if main_game.snake.direction.y != 1:
-						main_game.snake.direction = Vector2(0,-1)
+					if main_game.cowboy.direction.y != 1:
+						main_game.cowboy.direction = Vector2(0,-1)
 				if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-					if main_game.snake.direction.x != -1:
-						main_game.snake.direction = Vector2(1,0)
+					if main_game.cowboy.direction.x != -1:
+						main_game.cowboy.direction = Vector2(1,0)
 				if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-					if main_game.snake.direction.y != -1:
-						main_game.snake.direction = Vector2(0,1)
+					if main_game.cowboy.direction.y != -1:
+						main_game.cowboy.direction = Vector2(0,1)
 				if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-					if main_game.snake.direction.x != 1:
-						main_game.snake.direction = Vector2(-1,0)
+					if main_game.cowboy.direction.x != 1:
+						main_game.cowboy.direction = Vector2(-1,0)
 			if game_state == "title" and event.type == pygame.MOUSEBUTTONDOWN and button_rect.collidepoint(event.pos):
 				game_state = "game"
                 
